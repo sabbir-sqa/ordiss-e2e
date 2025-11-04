@@ -1,0 +1,106 @@
+{
+  "environments": {
+    "development": {
+      "baseURL": "https://10.10.10.10:700",
+      "name": "Development Environment"
+    },
+    "staging": {
+      "baseURL": "https://staging.ordiss.com",
+      "name": "Staging Environment"
+    },
+    "production": {
+      "baseURL": "https://prod.ordiss.com",
+      "name": "Production Environment"
+    }
+  },
+  "users": {
+    "superadmin": {
+      "username": "main.superadmin",
+      "password": "Ordiss@SA",
+      "role": "SuperAdmin",
+      "permissions": ["all"],
+      "expectedRedirect": "/dashboard",
+      "description": "Super Administrator with full system access"
+    },
+    "admin": {
+      "username": "admin.user",
+      "password": "admin123",
+      "role": "Admin",
+      "permissions": ["user_management", "system_config", "reports"],
+      "expectedRedirect": "/admin-dashboard",
+      "description": "Administrator with limited system access"
+    },
+    "user": {
+      "username": "regular.user",
+      "password": "user123",
+      "role": "User",
+      "permissions": ["view_data", "create_reports"],
+      "expectedRedirect": "/user-dashboard",
+      "description": "Regular user with basic access"
+    },
+    "readonly": {
+      "username": "readonly.user",
+      "password": "readonly123",
+      "role": "ReadOnly",
+      "permissions": ["view_data"],
+      "expectedRedirect": "/dashboard",
+      "description": "Read-only user with view permissions only"
+    }
+  },
+  "testData": {
+    "invalidCredentials": [
+      {
+        "username": "invalid.user",
+        "password": "wrongpassword",
+        "expectedError": "Invalid username or password"
+      },
+      {
+        "username": "main.superadmin",
+        "password": "wrongpassword",
+        "expectedError": "Invalid username or password"
+      },
+      {
+        "username": "",
+        "password": "Ordiss@SA",
+        "expectedError": "Username is required"
+      },
+      {
+        "username": "main.superadmin",
+        "password": "",
+        "expectedError": "Password is required"
+      },
+      {
+        "username": "",
+        "password": "",
+        "expectedError": "Username and password are required"
+      }
+    ],
+    "sessionTimeout": {
+      "timeoutMinutes": 30,
+      "warningMinutes": 5
+    }
+  },
+  "configuration": {
+    "timeouts": {
+      "default": 30000,
+      "short": 5000,
+      "long": 60000,
+      "navigation": 30000
+    },
+    "retries": {
+      "default": 2,
+      "flaky": 3,
+      "critical": 1
+    },
+    "screenshots": {
+      "onFailure": true,
+      "onSuccess": false,
+      "fullPage": true
+    },
+    "videos": {
+      "enabled": true,
+      "quality": "medium",
+      "retainOnSuccess": false
+    }
+  }
+}

@@ -1,0 +1,13 @@
+name,shortName,category,service,type,serviceType,corps,description
+Armed Forces Division,AFD,Headquarters,Ministry Of Defence,Static,Regular,Infantry,Main headquarters division
+Special Operations Command,SOC,Division,Army,Mobile,Special,Special Forces,Elite special operations unit
+Air Defense Brigade,ADB,Brigade,Air Force,Static,Regular,Air Defense,Air defense operations
+Naval Intelligence Unit,NIU,Battalion,Navy,Mobile,Special,Intelligence,Naval intelligence operations
+Engineering Corps HQ,ECH,Headquarters,Army,Static,Regular,Engineers,Engineering operations headquarters
+Medical Support Battalion,MSB,Battalion,Army,Static,Support,Medical,Medical support operations
+Communications Regiment,CR,Regiment,Army,Mobile,Regular,Signals,Communications and signals
+Logistics Support Division,LSD,Division,Army,Static,Support,Logistics,Supply and logistics operations
+Training Command Center,TCC,Headquarters,Ministry Of Defence,Static,Regular,Training,Military training operations
+Cyber Security Unit,CSU,Battalion,Air Force,Static,Special,Cyber,Cybersecurity operations
+Border Guard Regiment,BGR,Regiment,Army,Mobile,Regular,Infantry,Border security operations
+Aviation Maintenance Wing,AMW,Wing,Air Force,Static,Support,Aviation,Aircraft maintenance operations

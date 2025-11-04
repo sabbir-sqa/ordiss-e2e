@@ -1,0 +1,7 @@
+username,password,role,expectedRedirect,description
+main.superadmin,Ordiss@SA,SuperAdmin,/dashboard,Super Administrator with full system access
+admin.user,admin123,Admin,/admin-dashboard,Administrator with limited system access
+regular.user,user123,User,/user-dashboard,Regular user with basic access
+readonly.user,readonly123,ReadOnly,/dashboard,Read-only user with view permissions only
+test.user1,test123,User,/user-dashboard,Test user for automation testing
+test.user2,test456,User,/user-dashboard,Another test user for automation testing

@@ -88,26 +88,37 @@
 
 
 
-- [ ] 5. Implement Unit Types page object and CRUD tests
-  - [ ] 5.1 Create UnitTypesPage class extending BasePage
+- [x] 5. Implement Unit Types page object and CRUD tests
+
+
+
+  - [x] 5.1 Create UnitTypesPage class extending BasePage
+
+
     - Define unit types form and table element selectors
     - Implement CRUD operation methods (create, read, update, delete)
     - Add search, filter, and validation methods
     - _Requirements: 1.1, 1.2, 6.1, 6.3_
 
-  - [ ] 5.2 Implement Unit Types test specifications
+  - [x] 5.2 Implement Unit Types test specifications
+
+
     - Create single unit type creation tests
     - Implement bulk creation tests using CSV data
     - Add search, edit, and delete functionality tests
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 5.3 Integrate CSV data-driven testing
+  - [x] 5.3 Integrate CSV data-driven testing
+
+
     - Connect unit-types.csv data to test execution
     - Implement parameterized test execution with CSV data
     - Add data validation and error handling for CSV processing
     - _Requirements: 2.1, 2.3, 6.2_
 
-  - [ ] 5.4 Create comprehensive test coverage for Unit Types
+  - [x] 5.4 Create comprehensive test coverage for Unit Types
+
+
     - Write edge case tests for form validation
     - Add performance tests for bulk operations
     - _Requirements: 6.1, 6.5_

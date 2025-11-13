@@ -3,252 +3,146 @@ const BasePage = require('../base.page');
 
 /**
  * Unit Type List Page Object
- * Handles the unit types list view with search, filter, and CRUD operations
+ * Handles unit type list view with search, CRUD operations
  */
 class UnitTypeListPage extends BasePage {
   constructor(page) {
     super(page);
 
-    // Selectors for unit type list page
-    this.selectors = {
-      // Navigation
-      unitTypeMenu: 'a:has-text("Unit Type"), [href*="unit-type"]',
-
-      // List view
-      listContainer: '.unit-type-list, .mat-table, table',
-      tableRows: 'tr.mat-row, tbody tr',
-      tableHeaders: 'th, .mat-header-cell',
-
-      // Search and filter
-      searchInput: 'input[placeholder*="Search"], input[name="search"]',
-      searchButton: 'button:has-text("Search"), .search-btn',
-      filterButton: 'button:has-text("Filter"), .filter-btn',
-      clearButton: 'button:has-text("Clear"), .clear-btn',
-
-      // Actions
-      createButton:
-        'button:has-text("Create"), button:has-text("Add"), .create-btn',
-      editButton: 'button:has-text("Edit"), .edit-btn',
-      deleteButton: 'button:has-text("Delete"), .delete-btn',
-      viewButton: 'button:has-text("View"), .view-btn',
-
-      // Table columns
-      nameColumn: 'td:nth-child(1), .name-column',
-      shortNameColumn: 'td:nth-child(2), .short-name-column',
-      categoryColumn: 'td:nth-child(3), .category-column',
-      serviceColumn: 'td:nth-child(4), .service-column',
-      actionsColumn: 'td:last-child, .actions-column',
-
-      // Messages
-      successMessage:
-        '.mat-snack-bar-container, .success-message, .alert-success',
-      errorMessage: '.mat-error, .error-message, .alert-danger',
-      noDataMessage: '.no-data, .empty-state',
-
-      // Pagination
-      pagination: '.mat-paginator, .pagination',
-      nextPageButton: 'button[aria-label="Next page"]',
-      previousPageButton: 'button[aria-label="Previous page"]',
-
-      // Loading
-      loadingSpinner: '.mat-spinner, .loading, .spinner',
-    };
-  }
-
-  /**
-   * Navigate to unit type list page
-   */
-  async navigate() {
-    await this.click(this.selectors.unitTypeMenu);
-    await this.waitForLoad();
-    await this.waitForElement(this.selectors.listContainer);
-  }
-
-  /**
-   * Click create button to open form
-   */
-  async clickCreate() {
-    await this.click(this.selectors.createButton);
-    await this.waitForLoad();
-  }
-
-  /**
-   * Search for a unit type by name
-   * @param {string} searchTerm - Search term
-   */
-  async search(searchTerm) {
-    await this.fill(this.selectors.searchInput, searchTerm);
-
-    // Try to click search button if exists, otherwise press Enter
-    const searchButtonExists = await this.isElementVisible(
-      this.selectors.searchButton
-    );
-    if (searchButtonExists) {
-      await this.click(this.selectors.searchButton);
-    } else {
-      await this.page.keyboard.press('Enter');
-    }
-
-    await this.waitForLoad();
-  }
-
-  /**
-   * Find a unit type row by name
-   * @param {string} name - Unit type name
-   * @returns {Locator} Row locator
-   */
-  async findRowByName(name) {
-    const row = this.page
-      .locator(`${this.selectors.tableRows}:has-text("${name}")`)
+    // 🧩 Locators (encapsulated, semantic)
+    this.menuItem = this.page
+      .locator('mat-list-item')
+      .filter({ hasText: 'Unit Types' });
+    this.searchBox = this.page.getByRole('combobox', { name: 'Search' });
+    this.createButton = this.page.getByRole('button', {
+      name: 'Create Unit Type',
+    });
+    this.sortNameButton = this.page.getByRole('button', {
+      name: 'Name',
+      exact: true,
+    });
+    this.moreOptionsIcon = this.page.getByText('more_horiz');
+    this.editButton = this.page.getByRole('button', { name: 'Edit' });
+    this.deleteButton = this.page.getByRole('button', { name: 'Delete' });
+    this.successMessage = this.page
+      .locator('.mat-snack-bar-container, .success-message')
       .first();
-    return row;
+    this.errorMessage = this.page.locator('.mat-error, .error-message').first();
   }
 
-  /**
-   * Check if unit type exists in the list
-   * @param {string} name - Unit type name
-   * @returns {boolean}
-   */
-  async unitTypeExists(name) {
-    await this.search(name);
-    const row = await this.findRowByName(name);
-    return await row.isVisible().catch(() => false);
-  }
+  // 🌐 Navigation
+  async navigate() {
+    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForTimeout(2000);
 
-  /**
-   * Edit a unit type by name
-   * @param {string} name - Unit type name
-   */
-  async editUnitType(name) {
-    const row = await this.findRowByName(name);
-    const editButton = row.locator(this.selectors.editButton);
-    await editButton.click();
-    await this.waitForLoad();
-  }
-
-  /**
-   * Delete a unit type by name
-   * @param {string} name - Unit type name
-   */
-  async deleteUnitType(name) {
-    const row = await this.findRowByName(name);
-    const deleteButton = row.locator(this.selectors.deleteButton);
-    await deleteButton.click();
-
-    // Handle confirmation dialog if exists
-    await this.handleDeleteConfirmation();
-  }
-
-  /**
-   * Handle delete confirmation dialog
-   */
-  async handleDeleteConfirmation() {
-    // Wait for confirmation dialog
-    const confirmButton = this.page.locator(
-      'button:has-text("Confirm"), button:has-text("Yes"), button:has-text("Delete")'
-    );
-    const isVisible = await confirmButton
-      .isVisible({ timeout: 2000 })
-      .catch(() => false);
-
-    if (isVisible) {
-      await confirmButton.click();
-      await this.waitForLoad();
+    try {
+      await this.menuItem.waitFor({ state: 'visible', timeout: 5000 });
+      await this.menuItem.click();
+      await this.page.waitForLoadState('networkidle');
+      await this.page.waitForTimeout(3000); // Wait for Angular to render
+    } catch {
+      const baseUrl = process.env.BASE_URL || 'https://10.10.10.10:700';
+      await this.page.goto(`${baseUrl}/unit-type`);
+      await this.page.waitForLoadState('networkidle');
+      await this.page.waitForTimeout(3000);
     }
   }
 
-  /**
-   * Get all unit type names from current page
-   * @returns {Array<string>}
-   */
-  async getAllUnitTypeNames() {
-    const rows = await this.page.locator(this.selectors.tableRows).all();
-    const names = [];
-
-    for (const row of rows) {
-      const nameCell = row.locator(this.selectors.nameColumn);
-      const name = await nameCell.textContent();
-      if (name && name.trim()) {
-        names.push(name.trim());
-      }
-    }
-
-    return names;
+  async expectOnPage() {
+    await this.searchBox.waitFor({ state: 'visible', timeout: 10000 });
+    await this.createButton.waitFor({ state: 'visible', timeout: 10000 });
   }
 
-  /**
-   * Get unit type details by name
-   * @param {string} name - Unit type name
-   * @returns {Object} Unit type details
-   */
-  async getUnitTypeDetails(name) {
-    const row = await this.findRowByName(name);
-
-    const details = {
-      name: await row.locator(this.selectors.nameColumn).textContent(),
-      shortName: await row
-        .locator(this.selectors.shortNameColumn)
-        .textContent(),
-      category: await row.locator(this.selectors.categoryColumn).textContent(),
-      service: await row.locator(this.selectors.serviceColumn).textContent(),
-    };
-
-    return details;
+  // 🔨 Core Actions
+  async clickCreate() {
+    // Wait for page to be fully loaded
+    await this.page.waitForTimeout(2000);
+    await this.createButton.waitFor({ state: 'visible', timeout: 15000 });
+    await this.createButton.click();
+    await this.page.waitForLoadState('networkidle');
   }
 
-  /**
-   * Wait for success message
-   * @returns {string} Success message text
-   */
-  async getSuccessMessage() {
-    await this.waitForElement(this.selectors.successMessage);
-    return await this.page.locator(this.selectors.successMessage).textContent();
+  async search(searchTerm) {
+    await this.searchBox.fill(searchTerm);
+    await this.searchBox.press('Enter');
+    await this.page.waitForLoadState('networkidle');
   }
 
-  /**
-   * Wait for error message
-   * @returns {string} Error message text
-   */
-  async getErrorMessage() {
-    await this.waitForElement(this.selectors.errorMessage);
-    return await this.page.locator(this.selectors.errorMessage).textContent();
-  }
-
-  /**
-   * Clear search/filters
-   */
   async clearSearch() {
-    const clearButtonExists = await this.isElementVisible(
-      this.selectors.clearButton
-    );
-    if (clearButtonExists) {
-      await this.click(this.selectors.clearButton);
-    } else {
-      await this.fill(this.selectors.searchInput, '');
-      await this.page.keyboard.press('Enter');
+    await this.searchBox.fill('');
+    await this.searchBox.press('Enter');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async editUnitType(name) {
+    await this.search(name);
+    await this.moreOptionsIcon.first().click();
+    await this.editButton.click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async deleteUnitType(name) {
+    await this.search(name);
+    await this.moreOptionsIcon.first().click();
+    await this.deleteButton.click();
+    await this.deleteButton.click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async sortByName() {
+    await this.sortNameButton.click();
+  }
+
+  // 🧪 Verification Helpers
+  async unitTypeExists(name) {
+    try {
+      await this.search(name);
+      const row = this.page.locator('tr').filter({ hasText: name });
+      return await row.isVisible({ timeout: 5000 });
+    } catch {
+      return false;
     }
-    await this.waitForLoad();
   }
 
-  /**
-   * Wait for element to be visible
-   * @param {string} selector - Element selector
-   * @param {number} timeout - Timeout in ms
-   */
-  async waitForElement(selector, timeout = 10000) {
-    await this.page.waitForSelector(selector, { state: 'visible', timeout });
+  async expectUnitTypeExists(name) {
+    const exists = await this.unitTypeExists(name);
+    if (!exists) {
+      throw new Error(`Unit type "${name}" not found in list`);
+    }
   }
 
-  /**
-   * Check if element is visible
-   * @param {string} selector - Element selector
-   * @returns {boolean}
-   */
-  async isElementVisible(selector) {
-    return await this.page
-      .locator(selector)
-      .isVisible({ timeout: 2000 })
-      .catch(() => false);
+  async expectUnitTypeNotExists(name) {
+    const exists = await this.unitTypeExists(name);
+    if (exists) {
+      throw new Error(`Unit type "${name}" should not exist but was found`);
+    }
+  }
+
+  // ⚠️ Message Handling
+  async waitForSuccess() {
+    await this.successMessage.waitFor({ state: 'visible', timeout: 5000 });
+  }
+
+  async waitForError() {
+    await this.errorMessage.waitFor({ state: 'visible', timeout: 5000 });
+  }
+
+  async getSuccessMessage() {
+    try {
+      await this.waitForSuccess();
+      return await this.successMessage.textContent();
+    } catch {
+      return null;
+    }
+  }
+
+  async getErrorMessage() {
+    try {
+      await this.waitForError();
+      return await this.errorMessage.textContent();
+    } catch {
+      return null;
+    }
   }
 }
 

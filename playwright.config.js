@@ -1,25 +1,25 @@
-// config/playwright.config.js
-const path = require('path');
+// playwright.config.js
+require('dotenv').config();
 
 module.exports = {
   testDir: './tests',
-  timeout: 60_000,
+  timeout: 60000,
+
+  // Global setup - runs once before all tests
+  globalSetup: require.resolve('./tests/global-setup.js'),
+
   use: {
-    baseURL: process.env.BASE_URL || 'https://10.10.10.10:700/', // ← change as needed
-    headless: true,
+    baseURL: process.env.BASE_URL || 'https://10.10.10.10:700',
+    headless: false,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     trace: 'on-first-retry',
+    ignoreHTTPSErrors: true,
+    // Use saved auth state for all tests
+    storageState: 'playwright/.auth/user.json',
   },
-  reporter: [['html'], ['list']],
-  projects: [
-    {
-      name: 'Chromium',
-      use: { browserName: 'chromium' },
-    },
-    // Uncomment for cross-browser:
-    // { name: 'Firefox', use: { browserName: 'firefox' } },
-    // { name: 'WebKit', use: { browserName: 'webkit' } },
-  ],
-  outputDir: './reports/',
+
+  reporter: [['html', { outputFolder: 'reports/html' }], ['list']],
+
+  outputDir: './reports/test-results',
 };

@@ -9,242 +9,189 @@ class UnitTypeFormPage extends BasePage {
   constructor(page) {
     super(page);
 
-    // Form selectors based on ORDISS Angular Material structure
-    this.selectors = {
-      // Form container
-      formContainer: '.unit-type-form, .mat-dialog-content, form',
-      formTitle: '.mat-dialog-title, h2, h3',
-
-      // Input fields
-      nameEnglishInput:
-        'input[formControlName="nameEnglish"], input[name="nameEnglish"], #nameEnglish',
-      nameBanglaInput:
-        'input[formControlName="nameBangla"], input[name="nameBangla"], #nameBangla',
-      shortNameEnglishInput:
-        'input[formControlName="shortNameEnglish"], input[name="shortNameEnglish"], #shortNameEnglish',
-      shortNameBanglaInput:
-        'input[formControlName="shortNameBangla"], input[name="shortNameBangla"], #shortNameBangla',
-
-      // Dropdown selectors (Angular Material)
-      categorySelect:
-        'mat-select[formControlName="category"], select[name="category"], #category',
-      serviceSelect:
-        'mat-select[formControlName="service"], select[name="service"], #service',
-      typeSelect:
-        'mat-select[formControlName="type"], select[name="type"], #type',
-      corpsSelect:
-        'mat-select[formControlName="corps"], select[name="corps"], #corps',
-
-      // Checkbox selectors
-      isDepotCheckbox:
-        'input[formControlName="isDepot"], input[name="isDepot"], #isDepot',
-      isWorkshopCheckbox:
-        'input[formControlName="isWorkshop"], input[name="isWorkshop"], #isWorkshop',
-
-      // Buttons
-      saveButton: 'button:has-text("Save"), button[type="submit"], .save-btn',
-      cancelButton: 'button:has-text("Cancel"), .cancel-btn',
-
-      // Messages
-      successMessage:
-        '.mat-snack-bar-container, .success-message, .alert-success',
-      errorMessage: '.mat-error, .error-message, .alert-danger',
-
-      // Loading states
-      loadingSpinner: '.mat-spinner, .loading, .spinner',
-
-      // Mat-select options
-      matOption: 'mat-option, .mat-option',
-    };
-  }
-
-  /**
-   * Wait for form to be ready
-   */
-  async waitForFormReady() {
-    await this.waitForElement(this.selectors.formContainer);
-    await this.waitForElement(this.selectors.nameEnglishInput);
-  }
-
-  /**
-   * Fill the unit type form with data
-   * @param {Object} unitTypeData - Unit type data object
-   */
-  async fillForm(unitTypeData) {
-    await this.waitForFormReady();
-
-    // Fill text inputs
-    if (unitTypeData['Name (English)']) {
-      await this.fill(
-        this.selectors.nameEnglishInput,
-        unitTypeData['Name (English)']
-      );
-    }
-
-    if (unitTypeData['Name (Bangla)']) {
-      await this.fill(
-        this.selectors.nameBanglaInput,
-        unitTypeData['Name (Bangla)']
-      );
-    }
-
-    if (unitTypeData['Short Name (English)']) {
-      await this.fill(
-        this.selectors.shortNameEnglishInput,
-        unitTypeData['Short Name (English)']
-      );
-    }
-
-    if (unitTypeData['Short Name (Bangla)']) {
-      await this.fill(
-        this.selectors.shortNameBanglaInput,
-        unitTypeData['Short Name (Bangla)']
-      );
-    }
-
-    // Handle dropdowns (Angular Material)
-    if (unitTypeData['Category']) {
-      await this.selectMatOption(
-        this.selectors.categorySelect,
-        unitTypeData['Category']
-      );
-    }
-
-    if (unitTypeData['Service']) {
-      await this.selectMatOption(
-        this.selectors.serviceSelect,
-        unitTypeData['Service']
-      );
-    }
-
-    if (unitTypeData['Type']) {
-      await this.selectMatOption(
-        this.selectors.typeSelect,
-        unitTypeData['Type']
-      );
-    }
-
-    if (unitTypeData['Corps Names (English)']) {
-      await this.selectMatOption(
-        this.selectors.corpsSelect,
-        unitTypeData['Corps Names (English)']
-      );
-    }
-
-    // Handle checkboxes
-    if (unitTypeData['Is Depot'] === 'Yes') {
-      await this.check(this.selectors.isDepotCheckbox);
-    }
-
-    if (unitTypeData['Is Workshop'] === 'Yes') {
-      await this.check(this.selectors.isWorkshopCheckbox);
-    }
-  }
-
-  /**
-   * Select option from Angular Material dropdown
-   * @param {string} selectSelector - Selector for mat-select
-   * @param {string} optionText - Option text to select
-   */
-  async selectMatOption(selectSelector, optionText) {
-    // Click the mat-select to open dropdown
-    await this.click(selectSelector);
-
-    // Wait for options to appear
-    await this.page.waitForSelector(this.selectors.matOption, {
-      state: 'visible',
+    // 🧩 Locators (encapsulated, semantic)
+    this.nameEnglishInput = this.page.getByRole('textbox', {
+      name: 'Enter english name',
     });
-
-    // Click the specific option
-    await this.page.click(
-      `${this.selectors.matOption}:has-text("${optionText}")`
-    );
-
-    // Wait for dropdown to close
-    await this.page.waitForTimeout(500);
+    this.nameBanglaInput = this.page.getByRole('textbox', {
+      name: 'Enter bengali name',
+    });
+    this.shortNameEnglishInput = this.page.getByRole('textbox', {
+      name: 'Enter short english name',
+    });
+    this.shortNameBanglaInput = this.page.getByRole('textbox', {
+      name: 'Enter short bengali name',
+    });
+    this.categorySelect = this.page.getByRole('combobox', {
+      name: 'Select category',
+    });
+    this.serviceSelect = this.page.getByRole('combobox', {
+      name: 'Select service',
+    });
+    this.corpsSelect = this.page.getByRole('combobox', {
+      name: 'Select corps',
+    });
+    this.staticRadio = this.page.getByRole('radio', { name: 'Static' });
+    this.mobileRadio = this.page.getByRole('radio', { name: 'Mobile' });
+    this.workshopCheckbox = this.page.getByRole('checkbox', {
+      name: 'Workshop',
+    });
+    this.depotCheckbox = this.page.getByRole('checkbox', { name: 'Depot' });
+    this.createButton = this.page.getByRole('button', { name: 'Create' });
+    this.updateButton = this.page.getByRole('button', { name: 'Update' });
+    this.cancelButton = this.page.getByRole('button', { name: 'Cancel' });
+    this.successMessage = this.page
+      .locator('.mat-snack-bar-container, .success-message')
+      .first();
+    this.errorMessage = this.page.locator('.mat-error, .error-message').first();
   }
 
-  /**
-   * Check a checkbox
-   * @param {string} selector - Checkbox selector
-   */
-  async check(selector) {
-    const checkbox = this.page.locator(selector);
-    const isChecked = await checkbox.isChecked().catch(() => false);
+  // 🌐 Navigation
+  async expectOnPage() {
+    await this.nameEnglishInput.waitFor({ state: 'visible', timeout: 10000 });
+  }
 
-    if (!isChecked) {
-      await checkbox.check();
+  // 🔨 Core Actions
+  async fillForm(unitTypeData) {
+    await this.fillBasicInfo(unitTypeData);
+    await this.selectCategory(unitTypeData['Category']);
+    await this.selectService(unitTypeData['Service']);
+    await this.selectType(unitTypeData['Type']);
+    await this.setCheckboxes(unitTypeData);
+    await this.selectCorps(unitTypeData['Corps Names (English)']);
+  }
+
+  async create() {
+    await this.createButton.click();
+    await this.page.waitForLoadState('networkidle');
+    return await this.isSuccess();
+  }
+
+  async update() {
+    await this.updateButton.click();
+    await this.page.waitForLoadState('networkidle');
+    return await this.isSuccess();
+  }
+
+  async save() {
+    const isCreateMode = await this.createButton.isVisible().catch(() => false);
+    return isCreateMode ? await this.create() : await this.update();
+  }
+
+  async cancel() {
+    await this.cancelButton.click();
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  // 🧪 Reusable sub-actions
+  async fillBasicInfo(data) {
+    if (data['Name (English)']) {
+      await this.nameEnglishInput.fill(data['Name (English)']);
+    }
+
+    if (data['Name (Bangla)']) {
+      await this.nameBanglaInput.fill(data['Name (Bangla)']);
+    }
+
+    if (data['Short Name (English)']) {
+      await this.shortNameEnglishInput.fill(data['Short Name (English)']);
+    }
+
+    if (data['Short Name (Bangla)']) {
+      await this.shortNameBanglaInput.fill(data['Short Name (Bangla)']);
     }
   }
 
-  /**
-   * Save the unit type form
-   * @returns {boolean} Success status
-   */
-  async save() {
-    await this.click(this.selectors.saveButton);
-
-    // Wait for either success message or error
-    await Promise.race([
-      this.page.waitForSelector(this.selectors.successMessage, {
-        timeout: 10000,
-      }),
-      this.page.waitForSelector(this.selectors.errorMessage, {
-        timeout: 10000,
-      }),
-    ]).catch(() => {});
-
-    // Check if success message appeared
-    const isSuccess = await this.isElementVisible(
-      this.selectors.successMessage
-    );
-    return isSuccess;
+  async selectCategory(category) {
+    if (category) {
+      await this.categorySelect.click();
+      await this.page.getByRole('option', { name: category }).click();
+    }
   }
 
-  /**
-   * Cancel form and return to list
-   */
-  async cancel() {
-    await this.click(this.selectors.cancelButton);
+  async selectService(service) {
+    if (service) {
+      await this.serviceSelect.click();
+      await this.page.getByRole('option', { name: service }).click();
+    }
   }
 
-  /**
-   * Get success message text
-   * @returns {string}
-   */
+  async selectType(type) {
+    if (type === 'Static') {
+      await this.staticRadio.check();
+    } else if (type === 'Mobile') {
+      await this.mobileRadio.check();
+    }
+  }
+
+  async setCheckboxes(data) {
+    if (data['Is Workshop'] === 'Yes') {
+      await this.workshopCheckbox.check();
+    }
+
+    if (data['Is Depot'] === 'Yes') {
+      await this.depotCheckbox.check();
+    }
+  }
+
+  async selectCorps(corps) {
+    if (corps) {
+      await this.corpsSelect.click();
+      await this.corpsSelect.fill(corps.substring(0, 3));
+      await this.page.getByRole('option', { name: corps }).click();
+    }
+  }
+
+  // 🔁 Reset / Helpers
+  async clearForm() {
+    await this.nameEnglishInput.clear();
+    await this.nameBanglaInput.clear();
+    await this.shortNameEnglishInput.clear();
+    await this.shortNameBanglaInput.clear();
+  }
+
+  // ⚠️ Message Handling
+  async waitForSuccess() {
+    await this.successMessage.waitFor({ state: 'visible', timeout: 5000 });
+  }
+
+  async waitForError() {
+    await this.errorMessage.waitFor({ state: 'visible', timeout: 5000 });
+  }
+
+  async isSuccess() {
+    try {
+      await this.waitForSuccess();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async getSuccessMessage() {
-    await this.waitForElement(this.selectors.successMessage);
-    return await this.page.locator(this.selectors.successMessage).textContent();
+    try {
+      await this.waitForSuccess();
+      return await this.successMessage.textContent();
+    } catch {
+      return null;
+    }
   }
 
-  /**
-   * Get error message text
-   * @returns {string}
-   */
   async getErrorMessage() {
-    await this.waitForElement(this.selectors.errorMessage);
-    return await this.page.locator(this.selectors.errorMessage).textContent();
+    try {
+      await this.waitForError();
+      return await this.errorMessage.textContent();
+    } catch {
+      return null;
+    }
   }
 
-  /**
-   * Wait for element to be visible
-   * @param {string} selector - Element selector
-   * @param {number} timeout - Timeout in ms
-   */
-  async waitForElement(selector, timeout = 10000) {
-    await this.page.waitForSelector(selector, { state: 'visible', timeout });
-  }
-
-  /**
-   * Check if element is visible
-   * @param {string} selector - Element selector
-   * @returns {boolean}
-   */
-  async isElementVisible(selector) {
-    return await this.page
-      .locator(selector)
-      .isVisible({ timeout: 2000 })
-      .catch(() => false);
+  async expectSuccess() {
+    const success = await this.isSuccess();
+    if (!success) {
+      const error = await this.getErrorMessage();
+      throw new Error(`Expected success but got error: ${error}`);
+    }
   }
 }
 

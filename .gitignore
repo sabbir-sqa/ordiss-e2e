@@ -8,6 +8,7 @@ yarn-error.log*
 test-results/
 playwright-report/
 playwright/.cache/
+reports/
 
 # Environment variables
 .env
@@ -18,6 +19,10 @@ playwright/.cache/
 
 # Authentication states
 playwright/.auth/*.json
+
+# Documentation (except readme.md)
+*.md
+!readme.md
 
 # Logs
 logs

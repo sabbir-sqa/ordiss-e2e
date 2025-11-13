@@ -61,28 +61,114 @@ Copy `.env.example` to `.env` and update credentials:
 copy .env.example .env
 ```
 
-Edit `.env`:
+Edit `.env` with your credentials:
 ```env
 BASE_URL=https://10.10.10.10:700
-SUPERADMIN_USERNAME=main.superadmin
-SUPERADMIN_PASSWORD=Ordiss@SA
+SUPERADMIN_USERNAME=your_username
+SUPERADMIN_PASSWORD=your_password
 ```
 
 ### 3. Run Tests
 
 ```bash
-# Run all tests
+# Run all tests (uses .env)
 npm test
 
-# Run specific test file
-npx playwright test tests/login.spec.js
+# Run on localhost
+npm run test:local
 
-# Run with UI (headed mode)
-npx playwright test --headed
+# Run on dev server
+npm run test:dev
 
-# Run specific test by name
-npx playwright test --grep "should create a new unit type"
+# Run on staging
+npm run test:staging
+
+# Run with UI mode
+npm run test:ui
+
+# Run in debug mode
+npm run test:debug
+
+# View test report
+npm run report
 ```
+
+## 🌍 Environment Configuration
+
+### Purpose
+
+Environment files let you test against different environments (localhost, dev, staging, production) without changing code. This follows the 12-Factor App methodology and industry best practices.
+
+### Available Environment Files
+
+| File | Purpose | Committed? |
+|------|---------|------------|
+| `.env` | Your personal default config | ❌ No |
+| `.env.example` | Template (no real credentials) | ✅ Yes |
+| `.env.local` | Local development (localhost) | ❌ No |
+| `.env.dev` | Development server | ❌ No |
+| `.env.staging` | Staging server | ❌ No |
+
+### Environment Variables
+
+```env
+# Application URL (required)
+BASE_URL=https://10.10.10.10:700
+
+# Test Credentials (required)
+SUPERADMIN_USERNAME=your_username
+SUPERADMIN_PASSWORD=your_password
+ADMIN_USERNAME=your_admin
+ADMIN_PASSWORD=your_password
+
+# Test Configuration (optional - defaults provided)
+HEADLESS=false          # Run with browser visible
+TIMEOUT=60000           # Test timeout in ms
+RETRIES=2               # Number of retries on failure
+WORKERS=4               # Parallel test workers
+
+# Reporting (optional)
+SCREENSHOT_MODE=only-on-failure
+VIDEO_MODE=retain-on-failure
+```
+
+### Switching Environments
+
+**Test on localhost:**
+```bash
+npm run test:local
+# Uses .env.local with BASE_URL=http://localhost:4200
+```
+
+**Test on dev server:**
+```bash
+npm run test:dev
+# Uses .env.dev with BASE_URL=https://dev.ordiss.com
+```
+
+**Test on staging:**
+```bash
+npm run test:staging
+# Uses .env.staging with BASE_URL=https://staging.ordiss.com
+```
+
+**Or temporarily change your .env:**
+```env
+BASE_URL=http://localhost:3000
+```
+
+### Best Practices
+
+✅ **DO:**
+- Keep `.env` files out of version control (already in `.gitignore`)
+- Use `.env.example` as a template for team members
+- Update `.env.example` when adding new variables
+- Use environment-specific files for different test targets
+
+❌ **DON'T:**
+- Commit real credentials to `.env.example`
+- Hardcode URLs in page objects
+- Share your personal `.env` file
 
 ## 📝 Writing Tests
 
@@ -202,27 +288,29 @@ This opens:
 
 ## 📋 Available Scripts
 
+| Command | Environment | Description |
+|---------|-------------|-------------|
+| `npm test` | Default (.env) | Run all tests |
+| `npm run test:local` | Localhost | Test on local dev server |
+| `npm run test:local:ui` | Localhost + UI | Local testing with UI mode |
+| `npm run test:dev` | Dev server | Test on development server |
+| `npm run test:staging` | Staging | Test on staging server |
+| `npm run test:ui` | Default + UI | Interactive test mode |
+| `npm run test:headed` | Default | Run with visible browser |
+| `npm run test:debug` | Default + Debug | Step-by-step debugging |
+| `npm run report` | - | View last test report |
+
+### Running Specific Tests
+
 ```bash
-# Run all tests
-npm test
-
-# Run with UI mode
-npm run test:ui
-
-# Run in headed mode (see browser)
-npm run test:headed
-
-# Run in debug mode
-npm run test:debug
-
 # Run specific test file
-npx playwright test tests/unit-type.spec.js
+npm test tests/unit-type.spec.js
+
+# Run with specific environment
+npm run test:local tests/login.spec.js
 
 # Run tests matching pattern
-npx playwright test --grep "create"
-
-# Show test report
-npx playwright show-report
+npm test --grep "create"
 ```
 
 ## 🔧 Configuration

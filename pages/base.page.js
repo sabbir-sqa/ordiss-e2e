@@ -2,6 +2,8 @@
 class BasePage {
   constructor(page) {
     this.page = page;
+    // Get baseURL from Playwright config via page context
+    this.baseUrl = page.context()._options.baseURL || 'https://10.10.10.10:700';
   }
 
   async goto(url) {

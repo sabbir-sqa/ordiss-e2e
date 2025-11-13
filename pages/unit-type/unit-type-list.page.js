@@ -32,8 +32,6 @@ class UnitTypeListPage extends BasePage {
 
   // 🌐 Navigation
   async navigate() {
-    const baseUrl = process.env.BASE_URL || 'https://10.10.10.10:700';
-
     // Check if already on unit-types page
     if (this.page.url().includes('/administration/unit-types')) {
       await this.page.waitForLoadState('networkidle');
@@ -53,7 +51,7 @@ class UnitTypeListPage extends BasePage {
       await this.menuItem.click();
     } else {
       // Navigate directly to unit-types page
-      await this.page.goto(`${baseUrl}/administration/unit-types`);
+      await this.page.goto(`${this.baseUrl}/administration/unit-types`);
     }
 
     await this.page.waitForLoadState('networkidle');

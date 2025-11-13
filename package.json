@@ -2,14 +2,20 @@
   "name": "ordiss-automation",
   "version": "1.0.0",
   "scripts": {
-    "test": "npx playwright test",
-    "test:ui": "npx playwright test --ui",
-    "test:headed": "npx playwright test --headed",
-    "test:debug": "PWDEBUG=1 npx playwright test"
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:local": "dotenv -e .env.local -- playwright test",
+    "test:local:ui": "dotenv -e .env.local -- playwright test --ui",
+    "test:dev": "dotenv -e .env.dev -- playwright test",
+    "test:staging": "dotenv -e .env.staging -- playwright test",
+    "report": "playwright show-report reports/html"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
-    "csv-parser": "^3.2.0"
+    "csv-parser": "^3.2.0",
+    "dotenv-cli": "^7.4.4"
   },
   "dependencies": {
     "dotenv": "^17.2.3"

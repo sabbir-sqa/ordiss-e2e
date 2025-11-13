@@ -1,5 +1,4 @@
 // pages/auth/login.page.js
-require('dotenv').config();
 const BasePage = require('../base.page');
 
 /**
@@ -9,7 +8,6 @@ const BasePage = require('../base.page');
 class LoginPage extends BasePage {
   constructor(page) {
     super(page);
-    this.baseUrl = process.env.BASE_URL || 'https://10.10.10.10:700';
 
     // 🧩 Locators (encapsulated, semantic)
     this.logInButton = this.page

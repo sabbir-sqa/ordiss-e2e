@@ -59,6 +59,10 @@ async function globalSetup() {
       timeout: 30000,
     });
 
+    // Wait for page to settle after login
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
+
     // Ensure directory exists
     const authDir = path.dirname(authFile);
     if (!fs.existsSync(authDir)) {

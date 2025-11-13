@@ -32,25 +32,49 @@ class UnitTypeListPage extends BasePage {
 
   // 🌐 Navigation
   async navigate() {
+    const baseUrl = process.env.BASE_URL || 'https://10.10.10.10:700';
+
+    // Check if already on unit-types page
+    if (this.page.url().includes('/administration/unit-types')) {
+      await this.page.waitForLoadState('networkidle');
+      await this.page.waitForTimeout(2000);
+      return;
+    }
+
+    // Try to find and click menu item
     await this.page.waitForLoadState('networkidle');
     await this.page.waitForTimeout(2000);
 
-    try {
-      await this.menuItem.waitFor({ state: 'visible', timeout: 5000 });
+    const menuVisible = await this.menuItem
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+
+    if (menuVisible) {
       await this.menuItem.click();
-      await this.page.waitForLoadState('networkidle');
-      await this.page.waitForTimeout(3000); // Wait for Angular to render
-    } catch {
-      const baseUrl = process.env.BASE_URL || 'https://10.10.10.10:700';
-      await this.page.goto(`${baseUrl}/unit-type`);
-      await this.page.waitForLoadState('networkidle');
-      await this.page.waitForTimeout(3000);
+    } else {
+      // Navigate directly to unit-types page
+      await this.page.goto(`${baseUrl}/administration/unit-types`);
     }
+
+    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForTimeout(3000); // Wait for Angular to render
   }
 
   async expectOnPage() {
-    await this.searchBox.waitFor({ state: 'visible', timeout: 10000 });
-    await this.createButton.waitFor({ state: 'visible', timeout: 10000 });
+    console.log('Current URL:', this.page.url());
+
+    // Try to find any element to confirm page loaded
+    try {
+      await this.searchBox.waitFor({ state: 'visible', timeout: 10000 });
+      await this.createButton.waitFor({ state: 'visible', timeout: 10000 });
+    } catch (error) {
+      console.log('Page elements not found. Taking screenshot...');
+      await this.page.screenshot({
+        path: 'debug-unit-type-page.png',
+        fullPage: true,
+      });
+      throw error;
+    }
   }
 
   // 🔨 Core Actions
@@ -96,7 +120,8 @@ class UnitTypeListPage extends BasePage {
   // 🧪 Verification Helpers
   async unitTypeExists(name) {
     try {
-      await this.search(name);
+      // Wait for table to load
+      await this.page.waitForTimeout(2000);
       const row = this.page.locator('tr').filter({ hasText: name });
       return await row.isVisible({ timeout: 5000 });
     } catch {

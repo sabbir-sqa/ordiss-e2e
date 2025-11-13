@@ -32,7 +32,7 @@ class UnitTypeFormPage extends BasePage {
       name: 'Select corps',
     });
     this.staticRadio = this.page.getByRole('radio', { name: 'Static' });
-    this.mobileRadio = this.page.getByRole('radio', { name: 'Mobile' });
+    this.fieldRadio = this.page.getByRole('radio', { name: 'Field' });
     this.workshopCheckbox = this.page.getByRole('checkbox', {
       name: 'Workshop',
     });
@@ -64,13 +64,25 @@ class UnitTypeFormPage extends BasePage {
   async create() {
     await this.createButton.click();
     await this.page.waitForLoadState('networkidle');
-    return await this.isSuccess();
+    await this.page.waitForTimeout(2000);
+
+    // Check if we're back on the list page (success) or still on form (error)
+    const isBackOnList =
+      this.page.url().includes('/administration/unit-types') &&
+      !this.page.url().includes('/create');
+    return isBackOnList;
   }
 
   async update() {
     await this.updateButton.click();
     await this.page.waitForLoadState('networkidle');
-    return await this.isSuccess();
+    await this.page.waitForTimeout(2000);
+
+    // Check if we're back on the list page (success) or still on form (error)
+    const isBackOnList =
+      this.page.url().includes('/administration/unit-types') &&
+      !this.page.url().includes('/edit');
+    return isBackOnList;
   }
 
   async save() {
@@ -119,8 +131,8 @@ class UnitTypeFormPage extends BasePage {
   async selectType(type) {
     if (type === 'Static') {
       await this.staticRadio.check();
-    } else if (type === 'Mobile') {
-      await this.mobileRadio.check();
+    } else if (type === 'Field') {
+      await this.fieldRadio.check();
     }
   }
 
